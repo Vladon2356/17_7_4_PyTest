@@ -51,9 +51,12 @@ class UserModel(base):
 
 
     @classmethod
-    def return_all(cls):
+    def return_all(cls, to_dict=True):
         users = session.query(cls).order_by(cls.id).all()
-        return [cls.to_dict(user) for user in users]
+        if to_dict:
+            return [cls.to_dict(user) for user in users]
+        else:
+            return list(users)
 
     @classmethod
     def delete_by_id(cls, id):
@@ -100,7 +103,7 @@ class PostModel(base):
     def find_by_id(cls, id,to_dict=True):
         post = session.query(cls).filter_by(id=id).first()
         if not post:
-            return {"messege":f"Post with id {id} not found"}
+            return {"messege":f"Post with id {id} not found"}, 404
         else:
             if to_dict:
                 return cls.to_dict(post)
@@ -124,14 +127,17 @@ class PostModel(base):
             return {"messege":f"Posts by author {UserModel.find_by_id(author_id,to_dict=False).username} not found"}
         else:
             if to_dict:
-                return cls.to_dict(post)
+                return [cls.to_dict(post) for post in posts]
             else:
-                return post
+                return posts
 
     @classmethod
-    def return_all(cls):
+    def return_all(cls, to_dict = True):
         posts = session.query(cls).order_by(cls.id).all()
-        return [cls.to_dict(post) for post in posts]
+        if to_dict:
+            return [cls.to_dict(post) for post in posts]
+        else:
+            return list(posts)
 
     @classmethod
     def delete_by_id(cls, id):
@@ -153,7 +159,7 @@ class PostModel(base):
             "id": post.id,
             "title": post.title,
             "text": post.text[:50],
-            "author": post.author.username,
+            "author_id": post.author_id,
         }
 class RevokedTokenModel(base):
     __tablename__ = 'revoked_tokens'

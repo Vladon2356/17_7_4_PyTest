@@ -38,15 +38,16 @@ def create_post():
 def update_post(id):
     title = request.json.get("title")
     text = request.json.get("text")
-    post = PostModel.find_by_id(id, to_dict=False)
-    if not post:
+    post, code = PostModel.find_by_id(id, to_dict=False)
+    if code == 404:
         return jsonify({"message": 'post not found'}), 404
-    if title:
-        post.title = title
-    if text:
-        post.text = text
-    post.save_to_db()
-    return jsonify({"message":" Updated"})
+    else:
+        if title:
+            post.title = title
+        if text:
+            post.text = text
+        post.save_to_db()
+        return jsonify({"message":"Updated"})
 
 @posts_bp.route("/posts/<int:id>", methods=["DELETE"])
 @jwt_required()

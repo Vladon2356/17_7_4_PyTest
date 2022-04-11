@@ -94,7 +94,7 @@ def login():
 
 @auth_bp.route("/auth/refresh", methods=["POST"])
 @jwt_required(refresh=True)
-def post():
+def refresh():
     """Method for refreshing access token. Returns new access token."""
     current_user_identity = get_jwt_identity()
     user = UserModel.find_by_username(current_user_identity,to_dict=False)

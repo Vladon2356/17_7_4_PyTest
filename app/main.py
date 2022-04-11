@@ -1,9 +1,7 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-
-from config import Config as config
+from config import Config
 from .database.database import db, base
-
 
 def setup_database(app):
     with app.app_context():
@@ -23,11 +21,10 @@ def setup_jwt(app):
         return RevokedTokenModel.is_jti_blacklisted(jti)
 
 
-def create_app():
+def create_app(config= Config):
     app = Flask(__name__)
-    app.config.from_object("config.Config")
+    app.config.from_object(config)
 
-    # database first, then blueprints!
     setup_database(app)
     setup_jwt(app)
 
